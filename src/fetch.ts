@@ -1,27 +1,34 @@
-import request = require('request');
+import request = require('request-promise');
 import octokit = require('@octokit/rest');
 import { File } from './types';
 
+import github from './github-renderer';
+
 const octo = new octokit();
 
-export default function fetchAsync(url: string) {
-    request(url, { }, (err, _res, body) => {
-        if (err) throw err;
-    });
+export default async function fetchAsync(url: string): Promise<File[] | undefined> {    
+    const gh = await routeGithubUrl(url);
+    if (gh) return gh;
+
+    const body = await request(url);
+    console.log(`Fetching ${url}...`);
+    return parseFrom(body);
 }
 
-function rewriteUrl(url: string) {
-
+function parseFrom(content: string): File[] | undefined {
+    return github.parse(content);
 }
 
 async function routeGithubUrl(url: string): Promise<File[] | undefined> {
-    const rgx = /https?:\/\/(?:www\.)github.com\/(\w+)\/(\w+)\/issues\/(\d+)/i;
+    const rgx = /https?:\/\/(?:www\.)?github.com\/(\w+)\/(\w+)\/issues\/(\d+)/i;
     const match = rgx.exec(url);
     if (match === null) {
         return undefined;
     }
-    const issue = await octo.issues.get({ owner: match[1], repo: match[2], number: +match[3] });
-}
+    const [ , owner, repo, number] = match;
+    console.log(`Fetching GitHub issue ${owner}/${repo}#${number}`)
+    const issue = await octo.issues.get({ owner, repo, number: +number });
 
-request.get(url).
+    return parseFrom(issue.data.body);
+}
 

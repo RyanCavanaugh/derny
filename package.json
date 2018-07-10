@@ -4,7 +4,7 @@
   "description": "Read and write multiple files in markdown",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc && node lib/tests.js",
     "prepublishOnly": "tsc"
   },
   "bin": {
@@ -29,7 +29,10 @@
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
     "lodash": "^4.17.10",
-    "request": "^2.87.0"
+    "npm": "^6.1.0",
+    "prompt": "^1.0.0",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
@@ -37,6 +40,7 @@
     "@types/lodash": "^4.14.111",
     "@types/node": "^10.5.2",
     "@types/request": "^2.47.1",
+    "@types/request-promise": "^4.1.41",
     "typescript": "^3.0.0-dev.20180707"
   }
 }
