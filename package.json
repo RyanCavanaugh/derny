@@ -1,0 +1,37 @@
+{
+  "name": "derny",
+  "version": "1.0.0",
+  "description": "Read and write multiple files in markdown",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "tsc"
+  },
+  "bin": {
+    "derny": "lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyanCavanaugh/derny.git"
+  },
+  "keywords": [
+    "markdown"
+  ],
+  "author": "Ryan Cavanaugh <ryanca@microsoft.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RyanCavanaugh/derny/issues"
+  },
+  "homepage": "https://github.com/RyanCavanaugh/derny#readme",
+  "dependencies": {
+    "commander": "^2.16.0",
+    "fs-extra": "^6.0.1",
+    "glob": "^7.1.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.4",
+    "@types/glob": "^5.0.35",
+    "@types/node": "^10.5.2",
+    "typescript": "^3.0.0-dev.20180707"
+  }
+}
