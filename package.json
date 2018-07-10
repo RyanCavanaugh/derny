@@ -24,16 +24,19 @@
   },
   "homepage": "https://github.com/RyanCavanaugh/derny#readme",
   "dependencies": {
+    "@octokit/rest": "^15.9.4",
     "commander": "^2.16.0",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "request": "^2.87.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
     "@types/glob": "^5.0.35",
     "@types/lodash": "^4.14.111",
     "@types/node": "^10.5.2",
+    "@types/request": "^2.47.1",
     "typescript": "^3.0.0-dev.20180707"
   }
 }
