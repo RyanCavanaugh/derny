@@ -2,10 +2,12 @@ import commander = require('commander');
 import glob = require("glob");
 import fs = require("fs-extra");
 import path = require("path");
+import _ = require("lodash");
 
 commander.version("1.0.0");
 
 commander.command("list [files...]")
+    .option("--wrap", "Wrap output in a <details> block")
     .description("Generate a file listing")
     .action(list);
 
@@ -21,13 +23,18 @@ async function listAsync(globs: string[], _opts: any): Promise<void> {
     for (const glob of actualGlobs) {
         fileNames.push(...(await expandGlobOrFile(glob)));
     }
-    console.log(await renderGFM(await loadFiles(fileNames)));
+    const loadedFiles = await loadFiles(fileNames);
+    const opts = {
+        wrap: defaultify(_opts.wrap, shouldWrap(loadedFiles))
+    }
+    console.log(await renderGFM(loadedFiles, opts));
 }
 
 async function expandGlobOrFile(globOrFile: string): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
         if (glob.hasMagic(globOrFile)) {
             glob(globOrFile, { nodir: true }, (err, matches) => {
+                matches = matches.slice().sort();
                 if (err)
                     reject(err);
                 else
@@ -50,21 +57,41 @@ async function loadFiles(fileNames: string[]): Promise<File[]> {
     return result;
 }
 
-function renderGFM(files: File[]) {
-    return `<details open>
+function renderGFM(files: File[], opts: Options) {
+    if (opts.wrap) {
+        return `<details open>
 <summary>File Listing (${files.length} files)</summary>
 
 ${files.map(renderFileGFM).join("\r\n")}
 </details>`;
+    } else {
+        return files.map(renderFileGFM).join("\r\n");
+
+    }
 }
 
 function renderFileGFM(file: File) {
-    return `&#x1f5ce; **${path.relative(process.cwd(), file.fileName)}**
-<!-- file start -->
+    return `&#x1f5ce; **\`${path.relative(process.cwd(), file.fileName)}\`**
+<blockquote>
+
 \`\`\`${path.extname(file.fileName).substr(1)}
 ${file.content.replace("```", "")}
 \`\`\`
-<!-- file end -->`; 
+
+</blockquote>`; 
 }
 
 type File = { fileName: string, content: string };
+
+interface Options {
+    wrap: boolean;
+}
+
+function shouldWrap(files: File[]) {
+    return files.length > 5 || 
+        _.sumBy(files, f => f.content.length) > 6000;
+}
+
+function defaultify<T>(arg: T | undefined, defaultValue: T): T {
+    return arg === undefined ? defaultValue: arg;
+}
